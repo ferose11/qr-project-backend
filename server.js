@@ -23,7 +23,7 @@ app.get('/api/health', (req, res) => {
 app.get('/api/restaurants', async (req, res) => {
   try {
     // Note: Using cfind().sort().exec() for sorting in nedb-promises
-    const list = await restaurants.cfind({}, { _id: 0 }).sort({ rid: 1 }).exec();
+    const list = await restaurants.find({}, { _id: 0 }).sort({ rid: 1 }).exec();
     res.json(list);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -49,7 +49,7 @@ app.get('/api/restaurants/:rid/menu', async (req, res) => {
     const rest = await restaurants.findOne({ rid });
     if (!rest) return res.status(404).json({ error: 'Restaurant not found' });
     
-    const items = await menuItems.cfind({ restaurantRid: rid }, { _id: 0 }).sort({ mid: 1 }).exec();
+    const items = await menuItems.find({ restaurantRid: rid }, { _id: 0 }).sort({ mid: 1 }).exec();
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -70,7 +70,7 @@ app.post('/api/orders', async (req, res) => {
 
     const mids = items.map(i => i.mid);
     // Corrected to use $$in (single dollar sign)
-    const dbItems = await menuItems.find({ restaurantRid: restaurantId, mid: { $$in: mids } });
+    const dbItems = await menuItems.find({ restaurantRid: restaurantId, mid: { $in: mids } });
 
     if (dbItems.length !== items.length) {
       return res.status(400).json({ error: 'One or more menu items are invalid' });
@@ -82,7 +82,8 @@ app.post('/api/orders', async (req, res) => {
       const qty = Number(reqItem.qty);
       
       if (!Number.isInteger(qty) || qty <= 0) {
-          throw new Error(`Invalid quantity for item mid=$${reqItem.mid}`);
+           throw new Error(`Invalid quantity for item mid=${reqItem.mid}`);
+
       }
       
       const lineSubtotal = dbItem.price * qty;
@@ -134,11 +135,11 @@ app.put('/api/orders/:id/status', async (req, res) => {
     }
 
     // Corrected to use $$set (single dollar sign)
-    const updated = await orders.update(
-      { _id: req.params.id },
-      { $$set: { status } },
-      { returnUpdatedDocs: true }
-    );
+   const updated = await orders.update(
+  { _id: req.params.id },
+  { $$set: { status } },
+  { returnUpdatedDocs: true }
+);
     
     if (!updated) return res.status(404).json({ error: 'Order not found' });
     res.json(updated);
