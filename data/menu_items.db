@@ -1,0 +1,10 @@
+{"restaurantRid":"102","mid":6,"name":"Pepperoni Pizza","price":450,"description":"Pizza topped with pepperoni and cheese","_id":"5eMwau77dyHfOWqA"}
+{"restaurantRid":"102","mid":3,"name":"Margherita Pizza","price":350,"description":"Classic pizza with fresh mozzarella and basil","_id":"6ThQ8i6sK9JXpBo2"}
+{"restaurantRid":"102","mid":4,"name":"Sprite","price":100,"description":"Lemon-lime flavored soft drink","_id":"DhAUyJUa8rWVq0m2"}
+{"restaurantRid":"101","mid":5,"name":"French Fries","price":150,"description":"Crispy golden french fries","_id":"EALshc7NyiITJqXs"}
+{"restaurantRid":"103","mid":8,"name":"Milkshake","price":180,"description":"Creamy vanilla milkshake","_id":"H36yCWWv0b277Ovc"}
+{"restaurantRid":"101","mid":1,"name":"Cheeseburger","price":250,"description":"Juicy beef patty with cheese, lettuce, and tomato","_id":"Pb7L4fiPqGT0AZHt"}
+{"restaurantRid":"103","mid":7,"name":"Chicken Burger","price":280,"description":"Grilled chicken breast burger","_id":"kfgkX1lLOpGgsQSR"}
+{"restaurantRid":"101","mid":2,"name":"Coke","price":100,"description":"Refreshing cold Coca-Cola","_id":"q3vMrevdcKID4T0S"}
+{"$$indexCreated":{"fieldName":"restaurantRid","unique":false,"sparse":false}}
+{"$$indexCreated":{"fieldName":"mid","unique":false,"sparse":false}}
