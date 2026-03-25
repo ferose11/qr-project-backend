@@ -1,53 +1,54 @@
 const Datastore = require('nedb-promises');
-const fs = require('fs');
-const path = require('path');
 
-const dataDir = path.join(__dirname, 'data');
-if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+// Initialize in-memory databases (perfect for Render testing)
+const restaurants = Datastore.create();
+const menuItems = Datastore.create();
+const orders = Datastore.create();
 
-const restaurants = Datastore.create({
-  filename: path.join(dataDir, 'restaurants.db'),
-  autoload: true
-});
-const menuItems = Datastore.create({
-  filename: path.join(dataDir, 'menu_items.db'),
-  autoload: true
-});
-const orders = Datastore.create({
-  filename: path.join(dataDir, 'orders.db'),
-  autoload: true
-});
+// Seed function to populate initial data
+const seed = async () => {
+  try {
+    // Clear existing data (for in-memory, this is optional)
+    await restaurants.remove({}, { multi: true });
+    await menuItems.remove({}, { multi: true });
+    await orders.remove({}, { multi: true });
 
-menuItems.ensureIndex({ fieldName: 'restaurantRid' }).catch(()=>{});
-menuItems.ensureIndex({ fieldName: 'mid' }).catch(()=>{});
-orders.ensureIndex({ fieldName: 'restaurantRid' }).catch(()=>{});
+    // Sample restaurant data
+    await restaurants.insert([
+      {
+        rid: "rest1",
+        name: "Pizza Palace",
+        description: "Authentic Italian pizzas",
+        address: "123 Main Street",
+        phone: "+65 1234 5678"
+      },
+      {
+        rid: "rest2", 
+        name: "Burger Barn",
+        description: "Gourmet burgers and fries",
+        address: "456 Food Street",
+        phone: "+65 2345 6789"
+      }
+    ]);
 
-async function seed() {
-  const count = await restaurants.count({});
-  if (count > 0) return;
+    // Sample menu items
+    await menuItems.insert([
+      // Pizza Palace menu
+      { mid: "p1", restaurantRid: "rest1", name: "Margherita Pizza", description: "Fresh tomatoes, mozzarella, basil", price: 18.90, category: "Pizza" },
+      { mid: "p2", restaurantRid: "rest1", name: "Pepperoni Pizza", description: "Pepperoni, mozzarella cheese", price: 22.90, category: "Pizza" },
+      { mid: "p3", restaurantRid: "rest1", name: "Caesar Salad", description: "Romaine lettuce, parmesan, croutons", price: 12.90, category: "Salad" },
+      
+      // Burger Barn menu
+      { mid: "b1", restaurantRid: "rest2", name: "Classic Burger", description: "Beef patty, lettuce, tomato, onion", price: 15.90, category: "Burger" },
+      { mid: "b2", restaurantRid: "rest2", name: "Cheese Burger", description: "Beef patty with cheese", price: 17.90, category: "Burger" },
+      { mid: "b3", restaurantRid: "rest2", name: "French Fries", description: "Crispy golden fries", price: 8.90, category: "Sides" }
+    ]);
 
-  const seedRestaurants = [
-    { rid: "101", name: "Himalayan Cafe" },
-    { rid: "102", name: "Pizza House" },
-    { rid: "103", name: "Burger Junction" }
-  ];
-  await restaurants.insert(seedRestaurants);
-
-  const seedMenu = [
-    { restaurantRid: "101", mid: 1, name: "Cheeseburger", price: 250, description: "Juicy beef patty with cheese, lettuce, and tomato" },
-    { restaurantRid: "101", mid: 2, name: "Coke", price: 100, description: "Refreshing cold Coca-Cola" },
-    { restaurantRid: "101", mid: 5, name: "French Fries", price: 150, description: "Crispy golden french fries" },
-
-    { restaurantRid: "102", mid: 3, name: "Margherita Pizza", price: 350, description: "Classic pizza with fresh mozzarella and basil" },
-    { restaurantRid: "102", mid: 4, name: "Sprite", price: 100, description: "Lemon-lime flavored soft drink" },
-    { restaurantRid: "102", mid: 6, name: "Pepperoni Pizza", price: 450, description: "Pizza topped with pepperoni and cheese" },
-
-    { restaurantRid: "103", mid: 7, name: "Chicken Burger", price: 280, description: "Grilled chicken breast burger" },
-    { restaurantRid: "103", mid: 8, name: "Milkshake", price: 180, description: "Creamy vanilla milkshake" }
-  ];
-  await menuItems.insert(seedMenu);
-
-  console.log("Seeded restaurants and menu items.");
-}
+    console.log('✅ Database seeded successfully!');
+  } catch (error) {
+    console.error('❌ Error seeding database:', error);
+    throw error;
+  }
+};
 
 module.exports = { restaurants, menuItems, orders, seed };
